@@ -6,6 +6,8 @@ the CLI interface will allow you to:
 - set your note directory 
 - set the active large language model used for generating responses
 - query your notes and get a response with sources 
+
+docs: https://typer.tiangolo.com/
 """
 from typing import Optional
 from rptodo import __app_name__, __version__
