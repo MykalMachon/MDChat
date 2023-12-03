@@ -31,7 +31,7 @@ TODO: write this after you have the package up on pypi
 
 NoteChat is open-source and open to contributions! if you're looking to contribute to this project please: 
 
-* Creat an issue to discuss your idea
+* Create an issue to discuss your idea
 * Fork this repo
 * Create a new branch for your change 
 * Make the chnage discussed in your issue 
