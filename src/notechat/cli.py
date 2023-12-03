@@ -10,7 +10,7 @@ the CLI interface will allow you to:
 docs: https://typer.tiangolo.com/
 """
 from typing import Optional
-from rptodo import __app_name__, __version__
+from notechat import __app_name__, __version__
 
 import typer
 
@@ -35,7 +35,5 @@ def main(
     ),
 ):
     """This is the main entrypoint into the app"""
-    if note_dir:
-        typer.echo(f"Setting note dir to {note_dir}")
     if version:
         typer.echo(f"{__app_name__} version {__version__}")
