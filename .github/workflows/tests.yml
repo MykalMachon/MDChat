@@ -22,10 +22,21 @@ jobs:
           python-version: "3.10.12"
 
       - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | python3 -
+        uses: abatilo/actions-poetry@v2
+
+      - name: Setup a local environment for Poetry
+        run: | 
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
-        run: /root/.local/bin/poetry install
+        run: poetry install
 
       - name: Run Pytests
-        run: /root/.local/bin/poetry run pytest tests/
+        run: poetry run pytest -v
