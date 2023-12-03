@@ -4,18 +4,9 @@
 
 A CLI tool that allows you to chat with your markdown notes. NoteChat uses a large language model (LLM) and a method called "Retrieval Augmented Generation" to allow you to have intelligent conversations with an expert on your content. 
 
-- [NoteChat](#notechat)
-  - [Getting started](#getting-started)
-  - [Key Features](#key-features)
-  - [Contributing](#contributing)
-    - [Installing dependencies](#installing-dependencies)
-    - [Running the CLI during development](#running-the-cli-during-development)
-    - [Running tests](#running-tests)
-  - [License](#license)
+The primary goal of this project is to be both easy to get started with and educational to what modern AI systems can achieve. There are lots of tools like this out there but, in my opinion, they get a bit too into the weeds on the tech or require too much setup.
 
 ## Getting started
-
-![Cute beaver cartoon with a hardhat and some tools in hand. They are standing next to a sight that says "Under Construction"](docs/assets/under_construction.png)
 
 TODO: write this after you have the package up on pypi
 
