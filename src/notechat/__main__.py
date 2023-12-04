@@ -1,7 +1,10 @@
 from notechat import cli, __app_name__
+from notechat.config import init_app
 
 
 def main():
+    """This is the main entrypoint into the app"""
+    init_app()
     cli.app(prog_name=__app_name__)
     pass
 

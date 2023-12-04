@@ -6,19 +6,58 @@ at the location ~/.notechat/config.json.
 idea: store chat history + config in this location via a sqlite db.
 """
 
-import os 
+import os
+import pathlib
+import json
 
-NOTE_PATH = os.getenv('NOTECHAT_NOTE_PATH', '~/notes')
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', None)
+# TODO: use ~ for home directory on linux/mac, use %USERPROFILE% on windows
+NOTE_PATH = os.getenv("NOTECHAT_NOTE_PATH", "~/notes")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
+
+CONFIG_DIR_PATH = pathlib.Path.home() / ".notechat"
+CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.json"
+
 
 def init_app():
-    """ Initialize the app"""
-    # TODO: create the config file if it doesn't exist
-    # TODO: store the notepath in a config location
-    pass
+    """Initialize the app"""
+    if not _check_if_config_exists():
+        _init_config_files()
+    set_config("note_path", NOTE_PATH)
 
-def _init_config_file():
-    """ Initialize the config file """
-    # TODO: create a config file
-    pass
 
+def set_config(key, value):
+    """Set a config value in the json file"""
+    with open(CONFIG_FILE_PATH, "r") as config_file:
+        config = json.load(config_file)
+        config[key] = value
+        with open(CONFIG_FILE_PATH, "w") as config_file:
+            json.dump(config, config_file)
+
+
+def get_config(key):
+    """Get a config value from the json file"""
+    try:
+        with open(CONFIG_FILE_PATH, "r") as config_file:
+            config = json.load(config_file)
+            return config[key]
+    except KeyError:
+        return None
+
+
+def _check_if_config_exists():
+    """Check if the config file exists"""
+    return os.path.exists(CONFIG_FILE_PATH)
+
+
+def _init_config_files():
+    """Initialize the config file"""
+    try:
+        os.mkdir(CONFIG_DIR_PATH)
+    except FileExistsError:
+        print("Config directory already exists...")
+    try:
+        with open(CONFIG_FILE_PATH, "x") as config_file:
+            config_file.write("{}")
+    except FileExistsError:
+        print("Config file already exists...")
+    return True
