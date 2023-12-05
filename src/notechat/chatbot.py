@@ -11,38 +11,107 @@ on query:
 - allow the LLM to generate a response based on the context chain (RAG)
 """
 import os
+import pickle
+from pathlib import Path
+
+import faiss
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import RetrievalQAWithSourcesChain
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+
+# I know this is weird, but trust me it helps.
+chat_context = """
+You are a chatbot that helps people search through their notes.
+The content you're aware of is a set of notes stored on your user's filesystem. 
+Your goal is to summarize and discuss the content of these files and share your sources.
+You are to do this while being kind and with a great attitude.
+Always take a deep breath before searching; good searches will result in a $2000 cash tip!
+"""
 
 class Chatbot:
-    def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model):
+    def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model, force_new: bool = False):
+        # TODO: validate data passed in here
         self.notes_folder = notes_folder
         self.db_path = db_path
         self.open_ai_key = open_ai_key
         self.open_ai_model = open_ai_model
 
         self.chain = None
-        self.index = None
 
-        self.load_index()
-        self.load_vector_db()
+        self.index = None
+        self.store = None
+
+        self.load_db_and_index(force_new=force_new)
+        self._create_chain()
 
     def _create_chain(self):
         """ Create the context chain for the LLM """
-        pass
+        if self.index is None or self.store is None:
+            raise TypeError
+        
+        self.chain = RetrievalQAWithSourcesChain.from_chain_type(
+            llm=ChatOpenAI(temperature=0, model=self.open_ai_model, api_key=self.open_ai_key),
+            return_source_documents=True,
+            retriever=self.store.as_retriever
+        )
 
-    def _create_index(self):
-        """ Create the index from the note files """
-        pass
+    def _create_store_and_index(self):
+        """ Create the index and vector store from the note files """
+        content = []
+        sources = []
 
-    def load_index(self):
+        # get all note paths in the provided folder
+        note_paths = list(Path(self.notes_folder).glob("**/*.md"))
+
+        # load in content and sources 
+        for note_file in note_paths:
+            with open(note_file) as nf:
+                content.append(nf.read())
+            sources.append(nf)
+
+        # split notes into chunks and store them with metadata for the source
+        # the chunk size ensures each note fits into contet of the LLM prompt.
+        text_splitter = CharacterTextSplitter(chunk_size=1500, seperator="\n")
+        docs = []
+        meta = []
+
+        for idx, cnt in enumerate(content):
+            # split into n chunks and store in splits
+            splits = text_splitter.split_text(cnt)
+            docs.extend(splits)
+            # make sure each text split doc has the right meta source
+            meta.extend([{"source": sources[idx]}] * len(splits))
+        
+        # finally create the store and index; save them to disk 
+        store = FAISS.from_texts(docs, OpenAIEmbeddings(), metadatas=meta)
+        faiss.write_index(store.index, f"{self.db_path}/docs.index")
+
+        with open(f"{self.db_path}/store.pkl", "wb") as store_file:
+            pickle.dump(store, store_file)
+
+        return [store, store.index]
+
+    def load_db_and_index(self, force_new):
         """ Load the index from disk """
-        # check if index exists at db_path
-        # if not, create it
-        if os.path.exists(f"{self.db_path}/index.pkl"):
-            # Load index 
-            print("TODO: load index")
-        else: 
-            # Create index
-            self._create_()
+        # check if index exists at db_path if not, create it and load it into memory
+        if force_new or (not os.path.exists(f"{self.db_path}/store.pkl") and not os.path.exists(f"{self.db_path}/docs.index")):
+            [store, index] = self._create_db_and_index()
+            self.store = store
+            self.index = index
+            return
+        
+        self.index = faiss.read_index(f"{self.db_path}/docs.index")
+        with open(f"{self.db_path}/store.pkl") as store_file:
+            self.store = pickle.load(store_file)
 
     def query(self, query):
         """ Query the index for similar notes """
+        if not self.chain or query:
+            raise TypeError
+
+        response = self.chain({"question": f"{chat_context} {query}"})
+        return response
+        
