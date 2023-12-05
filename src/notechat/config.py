@@ -59,5 +59,5 @@ def _init_config_files():
         with open(CONFIG_FILE_PATH, "x") as config_file:
             config_file.write("{}")
     except FileExistsError:
-        print("Config file already exists...")
+        print("Config file already exists... moving on...")
     return True
