@@ -11,28 +11,38 @@ on query:
 - allow the LLM to generate a response based on the context chain (RAG)
 """
 import os
-from notechat import config
 
 class Chatbot:
-    def __init__(self):
-        self.index = None
-        self.vector_db = None
+    def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model):
+        self.notes_folder = notes_folder
+        self.db_path = db_path
+        self.open_ai_key = open_ai_key
+        self.open_ai_model = open_ai_model
+
         self.chain = None
+        self.index = None
 
         self.load_index()
         self.load_vector_db()
 
-    def _create_index_and_vector_db(self):
+    def _create_chain(self):
+        """ Create the context chain for the LLM """
+        pass
+
+    def _create_index(self):
         """ Create the index from the note files """
         pass
 
     def load_index(self):
         """ Load the index from disk """
-        pass
-
-    def load_vector_db(self):
-        """ Load the vector db from disk """
-        pass
+        # check if index exists at db_path
+        # if not, create it
+        if os.path.exists(f"{self.db_path}/index.pkl"):
+            # Load index 
+            print("TODO: load index")
+        else: 
+            # Create index
+            self._create_()
 
     def query(self, query):
         """ Query the index for similar notes """
