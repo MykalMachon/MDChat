@@ -14,6 +14,8 @@ import os
 import pickle
 from pathlib import Path
 
+from notechat.config import get_config
+
 import faiss
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chat_models import ChatOpenAI
@@ -74,7 +76,7 @@ class Chatbot:
 
         # split notes into chunks and store them with metadata for the source
         # the chunk size ensures each note fits into contet of the LLM prompt.
-        text_splitter = CharacterTextSplitter(chunk_size=1500, seperator="\n")
+        text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
         docs = []
         meta = []
 
@@ -85,8 +87,9 @@ class Chatbot:
             # make sure each text split doc has the right meta source
             meta.extend([{"source": sources[idx]}] * len(splits))
         
-        # finally create the store and index; save them to disk 
-        store = FAISS.from_texts(docs, OpenAIEmbeddings(), metadatas=meta)
+        # finally create the store and index; save them to disk
+        # TODO: we have to move this out of the class cause it can't pickle self
+        store = FAISS.from_texts(docs, OpenAIEmbeddings(openai_api_key=self.open_ai_key), metadatas=meta)
         faiss.write_index(store.index, f"{self.db_path}/docs.index")
 
         with open(f"{self.db_path}/store.pkl", "wb") as store_file:
@@ -98,7 +101,7 @@ class Chatbot:
         """ Load the index from disk """
         # check if index exists at db_path if not, create it and load it into memory
         if force_new or (not os.path.exists(f"{self.db_path}/store.pkl") and not os.path.exists(f"{self.db_path}/docs.index")):
-            [store, index] = self._create_db_and_index()
+            [store, index] = self._create_store_and_index()
             self.store = store
             self.index = index
             return

@@ -22,7 +22,6 @@ def init_app():
     """Initialize the app"""
     if not _check_if_config_exists():
         _init_config_files()
-    set_config("note_path", NOTE_PATH)
 
 
 def set_config(key, value):
@@ -58,6 +57,8 @@ def _init_config_files():
     try:
         with open(CONFIG_FILE_PATH, "x") as config_file:
             config_file.write("{}")
+            set_config("note_path", NOTE_PATH)
+            set_config("open_ai_key", OPENAI_API_KEY)
     except FileExistsError:
         print("Config file already exists... moving on...")
     return True

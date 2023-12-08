@@ -14,7 +14,8 @@ import re
 import os
 
 from notechat import __app_name__, __version__
-from notechat.config import set_config
+from notechat.config import set_config, get_config, CONFIG_DIR_PATH
+from notechat.chatbot import Chatbot
 
 app = typer.Typer()
 
@@ -93,9 +94,16 @@ def config():
 
 
 @app.command()
-def chat():
+def chat(question: str):
     """
     Chat with your notes.
     """
-    typer.echo("query: todo")
+    typer.echo("loading model...")
+    bot = Chatbot(
+        notes_folder=get_config("note_path"),
+        db_path=CONFIG_DIR_PATH,
+        open_ai_key=get_config("open_ai_key"),
+        open_ai_model=get_config("open_ai_model"),
+    )
+    bot.chat()
     typer.Exit()
