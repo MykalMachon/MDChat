@@ -57,8 +57,8 @@ def _init_config_files():
     try:
         with open(CONFIG_FILE_PATH, "x") as config_file:
             config_file.write("{}")
-            set_config("note_path", NOTE_PATH)
-            set_config("open_ai_key", OPENAI_API_KEY)
+        set_config("note_path", NOTE_PATH)
+        set_config("open_ai_key", OPENAI_API_KEY)
     except FileExistsError:
         print("Config file already exists... moving on...")
     return True
