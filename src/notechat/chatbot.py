@@ -33,6 +33,13 @@ You are to do this while being kind and with a great attitude.
 Always take a deep breath before searching; good searches will result in a $2000 cash tip!
 """
 
+def pickle_store(store, index, db_path):
+    """ Pickle the store and index to disk """
+    faiss.write_index(index, f"{db_path}/docs.index")
+
+    with open(f"{db_path}/store.pkl", "wb") as store_file:
+        pickle.dump(store, store_file)
+
 class Chatbot:
     def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model, force_new: bool = False):
         # TODO: validate data passed in here
@@ -46,7 +53,8 @@ class Chatbot:
         self.index = None
         self.store = None
 
-        self.load_db_and_index(force_new=force_new)
+        # TODO: this is a hack to get around the fact that we can't pickle self
+        self.load_db_and_index(force_new=True)
         self._create_chain()
 
     def _create_chain(self):
@@ -55,9 +63,9 @@ class Chatbot:
             raise TypeError
         
         self.chain = RetrievalQAWithSourcesChain.from_chain_type(
-            llm=ChatOpenAI(temperature=0, model=self.open_ai_model, api_key=self.open_ai_key),
+            llm=ChatOpenAI(temperature=0, model=self.open_ai_model, openai_api_key=self.open_ai_key),
             return_source_documents=True,
-            retriever=self.store.as_retriever
+            retriever=self.store.as_retriever()
         )
 
     def _create_store_and_index(self):
@@ -90,10 +98,7 @@ class Chatbot:
         # finally create the store and index; save them to disk
         # TODO: we have to move this out of the class cause it can't pickle self
         store = FAISS.from_texts(docs, OpenAIEmbeddings(openai_api_key=self.open_ai_key), metadatas=meta)
-        faiss.write_index(store.index, f"{self.db_path}/docs.index")
-
-        with open(f"{self.db_path}/store.pkl", "wb") as store_file:
-            pickle.dump(store, store_file)
+        # pickle_store(store, store.index, self.db_path)
 
         return [store, store.index]
 
@@ -107,12 +112,13 @@ class Chatbot:
             return
         
         self.index = faiss.read_index(f"{self.db_path}/docs.index")
-        with open(f"{self.db_path}/store.pkl") as store_file:
+        with open(f"{self.db_path}/store.pkl", "rb") as store_file:
             self.store = pickle.load(store_file)
+            self.store.index = self.index
 
     def query(self, query):
         """ Query the index for similar notes """
-        if not self.chain or query:
+        if not self.chain or not query:
             raise TypeError
 
         response = self.chain({"question": f"{chat_context} {query}"})

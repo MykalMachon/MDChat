@@ -98,12 +98,14 @@ def chat(question: str):
     """
     Chat with your notes.
     """
-    typer.echo("loading model...")
+    typer.echo("loading...\n")
     bot = Chatbot(
         notes_folder=get_config("note_path"),
         db_path=CONFIG_DIR_PATH,
         open_ai_key=get_config("open_ai_key"),
         open_ai_model=get_config("open_ai_model"),
     )
-    bot.chat()
+    result = bot.query(question)
+    typer.echo(result.get("answer"))
+    typer.echo(result.get("sources", "no sources found with this information"))
     typer.Exit()
