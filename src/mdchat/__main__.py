@@ -1,5 +1,5 @@
-from notechat import cli, __app_name__
-from notechat.config import init_app
+from mdchat import cli, __app_name__
+from mdchat.config import init_app
 
 
 def main():

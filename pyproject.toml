@@ -1,13 +1,16 @@
 [tool.poetry]
-name = "notechat"
+name = "mdchat"
 version = "0.1.0"
 description = "a CLI that lets you chat with your markdown notes"
 authors = ["Mykal Machon <mykal@tinybox.dev>"]
 license = "see LICENSE"
 readme = "README.md"
 
+[project.scripts]
+mdchat = "mdchat.__main__:main"
+
 [tool.poetry.scripts]
-notechat = "notechat.__main__:main"
+mdchat = "mdchat.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"

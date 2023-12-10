@@ -1,5 +1,5 @@
 import os
-from notechat import config
+from mdchat import config
 
 def test_init_app():
   config.init_app()

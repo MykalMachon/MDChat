@@ -14,8 +14,6 @@ import os
 import pickle
 from pathlib import Path
 
-from notechat.config import get_config
-
 import faiss
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chat_models import ChatOpenAI

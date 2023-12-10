@@ -1,5 +1,5 @@
 from typer.testing import CliRunner
-from notechat import __app_name__, __version__, cli
+from mdchat import __app_name__, __version__, cli
 
 runner = CliRunner()
 

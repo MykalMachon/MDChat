@@ -1,7 +1,7 @@
 import os
 import logging
 
-from notechat.config import CONFIG_DIR_PATH
+from mdchat.config import CONFIG_DIR_PATH
 
 # Get the user's home directory
 home_dir = CONFIG_DIR_PATH

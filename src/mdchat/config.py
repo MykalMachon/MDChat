@@ -1,7 +1,7 @@
 """
 Contains the configuration for NoteChat.
 All settings should be stored in the user's home directory
-at the location ~/.notechat/config.json. 
+at the location ~/.mdchat/config.json. 
 
 idea: store chat history + config in this location via a sqlite db.
 """
@@ -14,7 +14,7 @@ import json
 NOTE_PATH = os.getenv("NOTECHAT_NOTE_PATH", "~/notes")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 
-CONFIG_DIR_PATH = pathlib.Path.home() / ".notechat"
+CONFIG_DIR_PATH = pathlib.Path.home() / ".mdchat"
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.json"
 
 

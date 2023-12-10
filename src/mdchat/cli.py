@@ -13,9 +13,9 @@ import typer
 import re
 import os
 
-from notechat import __app_name__, __version__
-from notechat.config import set_config, get_config, CONFIG_DIR_PATH
-from notechat.chatbot import Chatbot
+from mdchat import __app_name__, __version__
+from mdchat.config import set_config, get_config, CONFIG_DIR_PATH
+from mdchat.chatbot import Chatbot
 
 app = typer.Typer()
 
