@@ -17,7 +17,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 CONFIG_DIR_PATH = pathlib.Path.home() / ".mdchat"
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.json"
 
-
 def init_app():
     """Initialize the app"""
     if not _check_if_config_exists():
