@@ -10,8 +10,6 @@ the CLI interface will allow you to:
 docs: https://typer.tiangolo.com/
 """
 import typer
-import re
-import os
 
 from mdchat import __app_name__, __version__
 from mdchat.config import set_config, get_config, CONFIG_DIR_PATH
