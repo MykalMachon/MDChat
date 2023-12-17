@@ -1,21 +1,12 @@
-# NoteChat
+# MDChat
 
 ![Tests](https://github.com/MykalMachon/NoteChat/actions/workflows/tests.yml/badge.svg)
 
-A CLI tool that allows you to chat with your markdown notes. NoteChat uses a large language model (LLM) and a method called "Retrieval Augmented Generation" to allow you to have intelligent conversations with an expert on your content. 
+A CLI tool that allows you to chat with your markdown notes. MDChat uses a large language model (LLM) and a method called "Retrieval Augmented Generation" to allow you to have intelligent conversations with an expert on your content. 
 
-- [NoteChat](#notechat)
-  - [Getting started](#getting-started)
-  - [Key Features](#key-features)
-  - [Contributing](#contributing)
-    - [Installing dependencies](#installing-dependencies)
-    - [Running the CLI during development](#running-the-cli-during-development)
-    - [Running tests](#running-tests)
-  - [License](#license)
+The primary goal of this project is to be both easy to get started with and educational to what modern AI systems can achieve. There are lots of tools like this out there but, in my opinion, they get a bit too into the weeds on the tech or require too much setup.
 
 ## Getting started
-
-![Cute beaver cartoon with a hardhat and some tools in hand. They are standing next to a sight that says "Under Construction"](docs/assets/under_construction.png)
 
 TODO: write this after you have the package up on pypi
 
@@ -29,9 +20,9 @@ TODO: write this after you have the package up on pypi
 
 ## Contributing 
 
-NoteChat is open-source and open to contributions! if you're looking to contribute to this project please: 
+MDChat is open-source and open to contributions! if you're looking to contribute to this project please: 
 
-* Creat an issue to discuss your idea
+* Create an issue to discuss your idea
 * Fork this repo
 * Create a new branch for your change 
 * Make the chnage discussed in your issue 
@@ -47,7 +38,7 @@ poetry install
 ### Running the CLI during development
 
 ```bash
-poetry run python3 ./src/notechat <your-command>
+poetry run mdchat <your-command>
 ```
 
 ### Running tests
@@ -58,4 +49,4 @@ poetry run pytest
 
 ## License 
 
-NoteChat is released under the [MIT License]([https://gi](https://github.com/MykalMachon/NoteChat/blob/main/LICENSE))
+MDChat is released under the [MIT License]([https://gi](https://github.com/MykalMachon/NoteChat/blob/main/LICENSE))

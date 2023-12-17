@@ -3,13 +3,13 @@ name: Tests
 on:
   push:
     paths:
-      - 'src/notechat/**'
+      - 'src/mdchat/**'
       - 'tests/**'
     branches:
       - main
   pull_request:
     paths:
-      - 'src/notechat/**'
+      - 'src/mdchat/**'
       - 'tests/**'
     branches:
       - main
@@ -42,7 +42,7 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --with dev
 
       - name: Run Pytests
         run: poetry run pytest -v
