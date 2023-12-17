@@ -1,7 +1,5 @@
-import re
 import os
 
-from mdchat.config import set_config, get_config
 from mdchat.commands import config_prompt, validate_open_ai_key
 
 
