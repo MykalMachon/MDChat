@@ -8,7 +8,23 @@ The primary goal of this project is to be both easy to get started with and educ
 
 ## Getting started
 
-TODO: write this after you have the package up on pypi
+To get started with MDChat you just need to install it, configure it, and get to chattin!
+
+```bash
+pip install mdchat
+```
+
+Then you can point mdchat at your notes through th interactive config and select a model (`GPT-4` is more accurate, `GPT-3.5-turbo` is much cheaper and faster)
+
+```bash
+mdchat config
+```
+
+After that's done, all you need to do is ask your notes some questions! 
+
+```bash
+mdchat chat "What have I written about <your-favourite-topic-goes-here>"
+```
 
 ## Key Features 
 
