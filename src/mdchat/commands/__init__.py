@@ -1,8 +1,11 @@
 # Generic utilities and values for the mdchat bot
 
 import re
+
 from mdchat.config import set_config, get_config
+
 from typer import Typer
+from rich import print
 
 
 def validate_open_ai_key(api_key):
@@ -25,9 +28,9 @@ def config_prompt(
     """
     curr_value = get_config(key)
     if curr_value is not None:
-        typer.echo(f"{curr_prompt}: {curr_value}")
-        should_change = typer.prompt("Would you like to change it? (y/n)", default="n")
-        if should_change == "n":
+        print(f":gear: {curr_prompt}: [green]{curr_value}[/green]")
+        should_change = typer.confirm("Would you like to change it?", default="n")
+        if not should_change:
             return curr_value
     new_value = None
     while new_value is None:
