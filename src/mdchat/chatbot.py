@@ -12,10 +12,12 @@ on query:
 """
 import os
 import pickle
+from datetime import datetime
 from pathlib import Path
 
 import faiss
 from langchain.text_splitter import CharacterTextSplitter
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.vectorstores import FAISS
@@ -23,11 +25,11 @@ from langchain.embeddings import OpenAIEmbeddings
 
 
 # I know this is weird, but trust me it helps.
-chat_context = """
+chat_context = f"""
 You are a chatbot that helps people search through their notes.
-The content you're aware of is a set of notes stored on your user's filesystem. 
+The current date is {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")} 
+The content you're aware of is a set of notes stored on your user's computer. 
 Your goal is to summarize and discuss the content of these files and share your sources.
-You are to do this while being kind and with a great attitude.
 Always take a deep breath before searching; good searches will result in a $2000 cash tip!
 """
 
@@ -47,6 +49,7 @@ class Chatbot:
         self.open_ai_model = open_ai_model
 
         self.chain = None
+        self.chat_history = []
 
         self.index = None
         self.store = None
@@ -82,7 +85,7 @@ class Chatbot:
 
         # split notes into chunks and store them with metadata for the source
         # the chunk size ensures each note fits into contet of the LLM prompt.
-        text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
+        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200, separator="\n")
         docs = []
         meta = []
 
@@ -119,6 +122,7 @@ class Chatbot:
         if not self.chain or not query:
             raise TypeError
 
-        response = self.chain({"question": f"{chat_context} {query}"})
+        response = self.chain({"question": f"{chat_context} {query}", "chat_history": self.chat_history})
+        self.chat_history.extend([HumanMessage(content=query), AIMessage(content=response.get("answer", "no response found"))])
         return response
         

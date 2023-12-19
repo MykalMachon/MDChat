@@ -16,6 +16,7 @@ from mdchat.config import set_config, get_config, CONFIG_DIR_PATH
 from mdchat.chatbot import Chatbot
 
 from mdchat.commands.config import cli_config
+from mdchat.commands.chat import cli_chat
 
 app = typer.Typer()
 
@@ -51,18 +52,5 @@ def config():
 
 
 @app.command()
-def chat(question: str):
-    """
-    Chat with your notes.
-    """
-    typer.echo("loading...\n")
-    bot = Chatbot(
-        notes_folder=get_config("note_path"),
-        db_path=CONFIG_DIR_PATH,
-        open_ai_key=get_config("open_ai_key"),
-        open_ai_model=get_config("open_ai_model"),
-    )
-    result = bot.query(question)
-    typer.echo(result.get("answer"))
-    typer.echo(result.get("sources", "no sources found with this information"))
-    typer.Exit()
+def chat():
+    cli_chat(typer)
