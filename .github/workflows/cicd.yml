@@ -39,14 +39,14 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
 
-      - name: Install dependencies
-        run: poetry install --with dev
-      
       - name: Define a cache for the virtual environment based on the dependencies lock file
         uses: actions/cache@v3  
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --with dev
 
       - name: Run Pytests
         run: poetry run pytest -v
@@ -76,8 +76,9 @@ jobs:
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            venv-
+      
+      - name: Install dependencies
+        run: poetry install --with dev
       
       - name: Configure Poetry publishes to PyPi via API key
         run: |
