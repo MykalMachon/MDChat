@@ -53,6 +53,8 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    # only runs on pushes into the main branch
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') 
     # only runs if tests have passed in the test job
     needs: test
     steps: 
