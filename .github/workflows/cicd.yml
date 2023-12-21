@@ -13,6 +13,8 @@ on:
       - 'tests/**'
     branches:
       - main
+  workflow_dispatch: # for manual runs
+    
 
 env: 
   PYTHON_VERSION: "3.10.12"
@@ -57,23 +59,25 @@ jobs:
     needs: test
     steps: 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python 
         uses: actions/setup-python@v4
         with:
           python-version: ${{env.PYTHON_VERSION}}
-      
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2
 
       - name: setup a local environment for Poetry 
         run: |
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
-
-      - name: Install dependencies via Poetry
-        run: poetry install
+      
+      - name: Load .venv from cache
+        uses: actions/cache@v3
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-
       
       - name: Configure Poetry publishes to PyPi via API key
         run: |
