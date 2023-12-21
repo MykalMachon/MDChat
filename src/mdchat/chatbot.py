@@ -10,12 +10,9 @@ on query:
 - load the content of those similar notes into the LLM context chain 
 - allow the LLM to generate a response based on the context chain (RAG)
 """
-import os
-import pickle
 from datetime import datetime
 from pathlib import Path
 
-import faiss
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain.chat_models import ChatOpenAI
