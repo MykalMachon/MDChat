@@ -61,11 +61,15 @@ class Chatbot:
 
     def _create_store_and_index(self):
         """ Create the index and vector store from the note files """
+        note_paths = []
         content = []
         sources = []
 
         # get all note paths in the provided folder
-        note_paths = list(Path(self.notes_folder).glob("**/*.md"))
+        if Path(self.notes_folder).is_file():
+            note_paths = [Path(self.notes_folder)]
+        else: 
+            note_paths = list(Path(self.notes_folder).glob("**/*.md"))
 
         # load in content and sources 
         for note_file in note_paths:

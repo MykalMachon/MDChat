@@ -9,14 +9,15 @@ the CLI interface will allow you to:
 
 docs: https://typer.tiangolo.com/
 """
+from pathlib import Path
+
 import typer
+from typing_extensions import Annotated
 
 from mdchat import __app_name__, __version__
-from mdchat.config import set_config, get_config, CONFIG_DIR_PATH
-from mdchat.chatbot import Chatbot
-
 from mdchat.commands.config import cli_config
-from mdchat.commands.chat import cli_chat
+from mdchat.commands.chat import cli_chat, cli_chat_single_file
+from mdchat.utils import validate_markdown_file
 
 app = typer.Typer()
 
@@ -48,9 +49,25 @@ def main(
 
 @app.command()
 def config():
+    """
+    Configure mdchat settings.
+    You can set your default note directory, llm, api keys, and more.
+    """
     cli_config(typer)
 
 
 @app.command()
-def chat():
-    cli_chat(typer)
+def chat(
+    file: Annotated[str, typer.Option("--file", "-f", help="Path to a single file to use as a note")] = None,
+):
+    """
+    Chat with your notes.
+    You can pass in a single file to use as a note, or chat with your default note directory.
+    """
+    if file:
+        if not validate_markdown_file(file):
+            typer.echo(f"Invalid file, either can't read the file or it does not exist")
+            raise typer.Exit()
+        cli_chat_single_file(typer, file)
+    else: 
+        cli_chat(typer)

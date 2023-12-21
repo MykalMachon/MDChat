@@ -11,7 +11,7 @@ import pathlib
 import json
 import platform
 
-from mdchat.utils import validate_open_ai_key
+from mdchat.utils import validate_openai_api_key
 
 # TODO: use ~ for home directory on linux/mac, use %USERPROFILE% on windows
 NOTE_PATH_DEFAULT = None
@@ -65,7 +65,7 @@ def check_if_config_is_valid():
         return False
     if get_config("note_path") is None or not os.path.exists(get_config("note_path")):
         return False
-    if get_config("open_ai_key") is None or not validate_open_ai_key(
+    if get_config("open_ai_key") is None or not validate_openai_api_key(
         get_config("open_ai_key")
     ):
         return False
