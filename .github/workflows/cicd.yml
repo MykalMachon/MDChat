@@ -90,8 +90,8 @@ jobs:
       - name: Get local MDChat version
         run: |
           echo "Current MDChat version is $(poetry version -s)"
-          echo echo "MDCHAT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
-      
+          echo "MDCHAT_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+
       - name: Check if that version exists on PyPi
         run: |
           echo "Checking if version ${MDCHAT_VERSION} exists on PyPi"
