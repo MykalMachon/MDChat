@@ -1,0 +1,113 @@
+name: CI/CD
+
+on:
+  push:
+    paths:
+      - 'src/mdchat/**'
+      - 'tests/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'src/mdchat/**'
+      - 'tests/**'
+    branches:
+      - main
+
+env: 
+  PYTHON_VERSION: "3.10.12"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{env.PYTHON_VERSION}}
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Setup a local environment for Poetry
+        run: | 
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: poetry install --with dev
+      
+      - name: Define a cache for the virtual environment based on the dependencies lock file
+        uses: actions/cache@v3  
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Run Pytests
+        run: poetry run pytest -v
+
+  release:
+    runs-on: ubuntu-latest
+    # only runs on pushes into the main branch
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # only runs if tests have passed in the test job
+    needs: test
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{env.PYTHON_VERSION}}
+      
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: setup a local environment for Poetry 
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies via Poetry
+        run: poetry install
+      
+      - name: Configure Poetry publishes to PyPi via API key
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Get local MDChat version
+        run: |
+          echo "Current MDChat version is $(poetry version -s)"
+          echo ::set-env name=MDCHAT_VERSION::$(poetry version -s)
+      
+      - name: Check if that version exists on PyPi
+        run: |
+          echo "Checking if version ${MDCHAT_VERSION} exists on PyPi"
+          curl -s https://pypi.org/pypi/mdchat/json | jq -r '.releases | has("${MDCHAT_VERSION}")'
+          echo ::set-env name=MDCHAT_VERSION_EXISTS::$(curl -s https://pypi.org/pypi/mdchat/json | jq -r '.releases | has("${MDCHAT_VERSION}")')
+        
+      - name: If version exists, exit
+        if: env.MDCHAT_VERSION_EXISTS == 'true'
+        run: |
+          echo "Version ${MDCHAT_VERSION} already exists on PyPi, exiting"
+          exit 1
+        
+      - name: Build and publish to PyPi
+        if: env.MDCHAT_VERSION_EXISTS != 'true'
+        run: poetry publish --build
+      
+      - name: Create a release
+        if: env.MDCHAT_VERSION_EXISTS != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.MDCHAT_VERSION }}
+          release_name: ${{ env.MDCHAT_VERSION }}
+          draft: false
+          prerelease: false
+
