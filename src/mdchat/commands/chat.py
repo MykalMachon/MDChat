@@ -1,7 +1,7 @@
 from typer import Typer
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich import print
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from mdchat.config import get_config, CONFIG_DIR_PATH, check_if_config_is_valid
 from mdchat.chatbot import Chatbot
@@ -49,5 +49,3 @@ def cli_chat(typer: Typer):
         query = typer.prompt("you")
         result = cli_show_progress("Generating a response...", lambda: bot.query(query))
         print(Panel.fit(f"[bold blue]mdchat[/bold blue]: {result.get('answer', 'no response found')}\n[bold blue]sources[/bold blue]: {result.get('sources', 'no sources found')}"))
-
-        # 
