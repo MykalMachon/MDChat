@@ -33,15 +33,8 @@ Your goal is to summarize and discuss the content of these files and share your 
 Always take a deep breath before searching; good searches will result in a $2000 cash tip!
 """
 
-def pickle_store(store, index, db_path):
-    """ Pickle the store and index to disk """
-    faiss.write_index(index, f"{db_path}/docs.index")
-
-    with open(f"{db_path}/store.pkl", "wb") as store_file:
-        pickle.dump(store, store_file)
-
 class Chatbot:
-    def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model, force_new: bool = False):
+    def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model):
         # TODO: validate data passed in here
         self.notes_folder = notes_folder
         self.db_path = db_path
@@ -55,7 +48,7 @@ class Chatbot:
         self.store = None
 
         # TODO: this is a hack to get around the fact that we can't pickle self
-        self.load_db_and_index(force_new=True)
+        self.load_db_and_index()
         self._create_chain()
 
     def _create_chain(self):
@@ -97,25 +90,18 @@ class Chatbot:
             meta.extend([{"source": sources[idx]}] * len(splits))
         
         # finally create the store and index; save them to disk
-        # TODO: we have to move this out of the class cause it can't pickle self
         store = FAISS.from_texts(docs, OpenAIEmbeddings(openai_api_key=self.open_ai_key), metadatas=meta)
-        # pickle_store(store, store.index, self.db_path)
 
         return [store, store.index]
 
-    def load_db_and_index(self, force_new):
-        """ Load the index from disk """
-        # check if index exists at db_path if not, create it and load it into memory
-        if force_new or (not os.path.exists(f"{self.db_path}/store.pkl") and not os.path.exists(f"{self.db_path}/docs.index")):
-            [store, index] = self._create_store_and_index()
-            self.store = store
-            self.index = index
-            return
+    def load_db_and_index(self):
+        """ create a new index and vector store from the note files """
+        [store, index] = self._create_store_and_index()
+        self.store = store
+        self.index = index
+        return
         
-        self.index = faiss.read_index(f"{self.db_path}/docs.index")
-        with open(f"{self.db_path}/store.pkl", "rb") as store_file:
-            self.store = pickle.load(store_file)
-            self.store.index = self.index
+        
 
     def query(self, query):
         """ Query the index for similar notes """
