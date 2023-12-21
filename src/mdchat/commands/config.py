@@ -1,7 +1,7 @@
 import os
 
-from mdchat.commands import config_prompt, validate_open_ai_key
-
+from mdchat.commands import config_prompt
+from mdchat.utils import validate_open_ai_key
 
 def cli_config(typer):
     """

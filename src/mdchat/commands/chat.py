@@ -2,7 +2,7 @@ from typer import Typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich import print
 
-from mdchat.config import get_config, CONFIG_DIR_PATH
+from mdchat.config import get_config, CONFIG_DIR_PATH, check_if_config_is_valid
 from mdchat.chatbot import Chatbot
 
 
@@ -25,6 +25,13 @@ def cli_chat(typer: Typer):
     It will create a new index from your notes and then allow
     you to chat back and forth in a continious chain.
     """
+    # validate that config is valid
+    config_valid = check_if_config_is_valid()
+    if not config_valid:
+        print(f"Config is invalid.\nPlease run [bold blue]mdchat config[/bold blue]")
+        typer.Exit()
+        return
+
     # load initial model
     bot = cli_show_progress(
         "Indexing your notes...",
@@ -33,7 +40,6 @@ def cli_chat(typer: Typer):
             db_path=CONFIG_DIR_PATH,
             open_ai_key=get_config("open_ai_key"),
             open_ai_model=get_config("open_ai_model"),
-            force_new=True,
         ),
     )
 
