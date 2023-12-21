@@ -30,6 +30,7 @@ Your goal is to summarize and discuss the content of these files and share your 
 Always take a deep breath before searching; good searches will result in a $2000 cash tip!
 """
 
+
 class Chatbot:
     def __init__(self, notes_folder, db_path, open_ai_key, open_ai_model):
         # TODO: validate data passed in here
@@ -49,25 +50,31 @@ class Chatbot:
         self._create_chain()
 
     def _create_chain(self):
-        """ Create the context chain for the LLM """
+        """Create the context chain for the LLM"""
         if self.index is None or self.store is None:
             raise TypeError
-        
+
         self.chain = RetrievalQAWithSourcesChain.from_chain_type(
-            llm=ChatOpenAI(temperature=0, model=self.open_ai_model, openai_api_key=self.open_ai_key),
+            llm=ChatOpenAI(
+                temperature=0, model=self.open_ai_model, openai_api_key=self.open_ai_key
+            ),
             return_source_documents=True,
-            retriever=self.store.as_retriever()
+            retriever=self.store.as_retriever(),
         )
 
     def _create_store_and_index(self):
-        """ Create the index and vector store from the note files """
+        """Create the index and vector store from the note files"""
+        note_paths = []
         content = []
         sources = []
 
         # get all note paths in the provided folder
-        note_paths = list(Path(self.notes_folder).glob("**/*.md"))
+        if Path(self.notes_folder).is_file():
+            note_paths = [Path(self.notes_folder)]
+        else:
+            note_paths = list(Path(self.notes_folder).glob("**/*.md"))
 
-        # load in content and sources 
+        # load in content and sources
         for note_file in note_paths:
             with open(note_file) as nf:
                 content.append(nf.read())
@@ -75,7 +82,9 @@ class Chatbot:
 
         # split notes into chunks and store them with metadata for the source
         # the chunk size ensures each note fits into contet of the LLM prompt.
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200, separator="\n")
+        text_splitter = CharacterTextSplitter(
+            chunk_size=1000, chunk_overlap=200, separator="\n"
+        )
         docs = []
         meta = []
 
@@ -85,27 +94,33 @@ class Chatbot:
             docs.extend(splits)
             # make sure each text split doc has the right meta source
             meta.extend([{"source": sources[idx]}] * len(splits))
-        
+
         # finally create the store and index; save them to disk
-        store = FAISS.from_texts(docs, OpenAIEmbeddings(openai_api_key=self.open_ai_key), metadatas=meta)
+        store = FAISS.from_texts(
+            docs, OpenAIEmbeddings(openai_api_key=self.open_ai_key), metadatas=meta
+        )
 
         return [store, store.index]
 
     def load_db_and_index(self):
-        """ create a new index and vector store from the note files """
+        """create a new index and vector store from the note files"""
         [store, index] = self._create_store_and_index()
         self.store = store
         self.index = index
         return
-        
-        
 
     def query(self, query):
-        """ Query the index for similar notes """
+        """Query the index for similar notes"""
         if not self.chain or not query:
             raise TypeError
 
-        response = self.chain({"question": f"{chat_context} {query}", "chat_history": self.chat_history})
-        self.chat_history.extend([HumanMessage(content=query), AIMessage(content=response.get("answer", "no response found"))])
+        response = self.chain(
+            {"question": f"{chat_context} {query}", "chat_history": self.chat_history}
+        )
+        self.chat_history.extend(
+            [
+                HumanMessage(content=query),
+                AIMessage(content=response.get("answer", "no response found")),
+            ]
+        )
         return response
-        

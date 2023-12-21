@@ -1,7 +1,8 @@
 import os
 
 from mdchat.commands import config_prompt
-from mdchat.utils import validate_open_ai_key
+from mdchat.utils import validate_openai_api_key
+
 
 def cli_config(typer):
     """
@@ -20,7 +21,7 @@ def cli_config(typer):
         "Your current OpenAI API Key is",
         "Enter your OpenAI API Key",
         "Invalid API Key. Try again.",
-        validate_open_ai_key,
+        validate_openai_api_key,
         typer,
     )
     config_prompt(

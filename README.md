@@ -20,16 +20,22 @@ Then you can point mdchat at your notes through th interactive config and select
 mdchat config
 ```
 
-After that's done, all you need to do is start a chat with your note! You can start a new chat thread with the following command:
+After that's done, all you need to do is start a chat with your notes! You can start a new chat thread with the following command:
 
 ```bash
 mdchat chat
 ```
 
+Or if you want to chat with a specific note
+
+```bash
+mdchat chat --file "/path/to/your/file.md"
+```
+
 ## Key Features 
 
-- Allows you to "chat" with any folder of markdown files.
-- Answers will include "sources" to the notes used in generating them.
+- Allows you to "chat" with any folder of markdown files or a single markdown file.
+- Answers will include "sources" to the notes used in generating them when possible.
 - summarizing the most recent notes on a certain topic (given your notes are dated)
 - summarizing what you've been working on in the last day, or week (given your notes are dated)
 - Making novel connections on topics you previously hadn't thought were related

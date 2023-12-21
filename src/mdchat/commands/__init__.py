@@ -7,6 +7,7 @@ from mdchat.config import set_config, get_config
 from typer import Typer
 from rich import print
 
+
 def config_prompt(
     key: str,
     curr_prompt: str,
