@@ -1,7 +1,8 @@
 import re
 from pathlib import Path
 
-# validators 
+
+# validators
 def validate_openai_api_key(api_key):
     """
     validate the general format of an openai api key.
@@ -13,6 +14,7 @@ def validate_openai_api_key(api_key):
     if re.match(pattern, api_key) is None:
         return False
     return True
+
 
 def validate_markdown_file(file_path):
     """

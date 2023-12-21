@@ -58,7 +58,9 @@ def config():
 
 @app.command()
 def chat(
-    file: Annotated[str, typer.Option("--file", "-f", help="Path to a single file to use as a note")] = None,
+    file: Annotated[
+        str, typer.Option("--file", "-f", help="Path to a single file to use as a note")
+    ] = None,
 ):
     """
     Chat with your notes.
@@ -69,5 +71,5 @@ def chat(
             typer.echo(f"Invalid file, either can't read the file or it does not exist")
             raise typer.Exit()
         cli_chat_single_file(typer, file)
-    else: 
+    else:
         cli_chat(typer)

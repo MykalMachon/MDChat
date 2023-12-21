@@ -3,6 +3,7 @@ import os
 from mdchat.commands import config_prompt
 from mdchat.utils import validate_openai_api_key
 
+
 def cli_config(typer):
     """
     Configure NoteChat settings.

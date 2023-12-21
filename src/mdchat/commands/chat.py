@@ -48,9 +48,10 @@ def cli_chat_single_file(typer: Typer, file: str):
         print(
             Panel.fit(
                 f"[bold blue]mdchat[/bold blue]: {result.get('answer', 'no response found')}\n[bold blue]sources[/bold blue]: {result.get('sources', 'no sources found')}",
-                title=f"Chatting with \"{file.split('/')[-1]}\""
+                title=f"Chatting with \"{file.split('/')[-1]}\"",
             )
         )
+
 
 def cli_chat(typer: Typer):
     """
