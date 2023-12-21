@@ -1,6 +1,6 @@
 # MDChat
 
-![Tests](https://github.com/MykalMachon/NoteChat/actions/workflows/tests.yml/badge.svg)
+![Tests](https://github.com/MykalMachon/NoteChat/actions/workflows/cicd.yml/badge.svg)
 
 A CLI tool that allows you to chat with your markdown notes. MDChat uses a large language model (LLM) and a method called "Retrieval Augmented Generation" to allow you to have intelligent conversations with an expert on your content. 
 
