@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mdchat"
-version = "1.0.1"
+version = "1.0.2"
 description = "a CLI that lets you chat with your markdown notes"
 authors = ["Mykal Machon <mykal@tinybox.dev>"]
 license = "see LICENSE"
