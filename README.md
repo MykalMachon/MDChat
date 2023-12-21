@@ -20,10 +20,10 @@ Then you can point mdchat at your notes through th interactive config and select
 mdchat config
 ```
 
-After that's done, all you need to do is ask your notes some questions! 
+After that's done, all you need to do is start a chat with your note! You can start a new chat thread with the following command:
 
 ```bash
-mdchat chat "What have I written about <your-favourite-topic-goes-here>"
+mdchat chat
 ```
 
 ## Key Features 
