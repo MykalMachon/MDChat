@@ -1,2 +1,2 @@
 __app_name__ = "MDChat"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
