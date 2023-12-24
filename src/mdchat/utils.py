@@ -1,6 +1,24 @@
 import re
 from pathlib import Path
 
+valid_openai_models = [
+    "gpt-3.5-turbo",
+    "gpt-3.5-turbo-16k",
+    "gpt-4",
+]
+
+
+def validate_openai_model(model):
+    """
+    validate the general format of an openai model.
+    does not garuntee that the model is valid.
+    """
+    if model is None:
+        return False
+    if model not in valid_openai_models:
+        return False
+    return True
+
 
 # validators
 def validate_openai_api_key(api_key):

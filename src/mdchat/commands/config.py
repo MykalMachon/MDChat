@@ -1,7 +1,7 @@
 import os
 
 from mdchat.commands import config_prompt
-from mdchat.utils import validate_openai_api_key
+from mdchat.utils import validate_openai_api_key, validate_openai_model, valid_openai_models
 
 
 def cli_config(typer):
@@ -27,9 +27,9 @@ def cli_config(typer):
     config_prompt(
         "open_ai_model",
         "Your current OpenAI model is",
-        "Enter a valid OpenAI model (gpt-3.5-turbo, gpt-4)",
+        f"Enter a valid OpenAI model {', '.join(valid_openai_models)}",
         "Invalid model. Try again.",
-        lambda x: x in ["gpt-3.5-turbo", "gpt-4"],
+        validate_openai_model,
         typer,
     )
 

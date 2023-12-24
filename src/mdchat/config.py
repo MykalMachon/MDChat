@@ -11,7 +11,7 @@ import pathlib
 import json
 import platform
 
-from mdchat.utils import validate_openai_api_key
+from mdchat.utils import validate_openai_api_key, validate_openai_model
 
 # TODO: use ~ for home directory on linux/mac, use %USERPROFILE% on windows
 NOTE_PATH_DEFAULT = None
@@ -69,10 +69,7 @@ def check_if_config_is_valid():
         get_config("open_ai_key")
     ):
         return False
-    if get_config("open_ai_model") is None or get_config("open_ai_model") not in [
-        "gpt-3.5-turbo",
-        "gpt-4",
-    ]:
+    if get_config("open_ai_model") is None or not validate_openai_model(get_config("open_ai_model")):
         return False
     return True
 
